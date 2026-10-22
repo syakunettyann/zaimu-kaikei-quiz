@@ -424,10 +424,20 @@
   }
 
   function submitAnswer() {
+    if (!state.selectedKey) return;
+    recordAnswer(state.selectedKey);
+  }
+
+  function giveUp() {
+    recordAnswer(null);
+  }
+
+  function recordAnswer(key) {
     const q = currentQuestion();
-    if (!q || !state.selectedKey || state.answers[state.idx]) return;
-    const correct = state.selectedKey === q.answer;
-    state.answers[state.idx] = { key: state.selectedKey, correct };
+    if (!q || state.answers[state.idx]) return;
+    const correct = key === q.answer;
+    state.answers[state.idx] = { key, correct, unknown: key === null };
+    state.selectedKey = key;
 
     const h = state.history[q.id] || { c: 0, w: 0, last: null };
     if (correct) h.c++;
@@ -442,7 +452,7 @@
     }
 
     stopSpeech();
-    playResultSound(correct);
+    if (key !== null) playResultSound(correct);
     render();
   }
 
@@ -935,7 +945,7 @@
     let explainHtml = "";
     if (answered) {
       resultBanner = `<div class="result-banner ${answer.correct ? "ok" : "ng"}">
-        ${answer.correct ? "正解 ◎" : "不正解 ×（正解は " + escapeHtml(q.answer) + "）"}
+        ${answer.correct ? "正解 ◎" : (answer.unknown ? "わからない（不正解として記録）" : "不正解 ×") + "（正解は " + escapeHtml(q.answer) + "）"}
         <span class="code">${escapeHtml(q.id)}</span>
       </div>`;
       explainHtml = renderExplainBox(q);
@@ -951,7 +961,6 @@
         ${q.topic ? `<div class="topic-badge">${escapeHtml(q.topic)}</div>` : ""}
         <div class="q-text" data-speak="q" onclick="App.toggleSpeak('q')">${nl2br(q.question)}</div>
         <div class="choice-list">${choicesHtml}</div>
-        ${answered ? "" : `<div class="actions"><button class="btn" ${state.selectedKey ? "" : "disabled"} onclick="App.submitAnswer()">解答する</button></div>`}
         ${resultBanner}
         ${explainHtml}
       </div>
@@ -965,6 +974,10 @@
     const answered = !!state.answers[state.idx];
     return `
       ${renderQuestionCard(q)}
+      ${answered ? "" : `<div class="answer-actions">
+        <button class="btn" ${state.selectedKey ? "" : "disabled"} onclick="App.submitAnswer()">解答する</button>
+        <button class="btn secondary" onclick="App.giveUp()">わからない</button>
+      </div>`}
       <div class="bottom-nav">
         <button class="btn secondary" ${state.idx <= 0 ? "disabled" : ""} onclick="App.goTo(-1)">← 前の問題</button>
         <button class="btn ${answered ? "" : "secondary"}" onclick="App.goTo(1)">${last ? "結果を見る" : "次の問題 →"}</button>
@@ -1030,7 +1043,7 @@
     toggleCollapse, toggleItem, toggleGroup, selectAll, setPref, setCount, setSearchText,
     runSearch, startFromHome, startFromSearch, startFromHit, startFromBookmarks, startFromBookmarkRow,
     removeBookmark, resetHistory, restartSame,
-    selectChoice, submitAnswer, goTo, toggleBookmark, toggleSpeak,
+    selectChoice, submitAnswer, giveUp, goTo, toggleBookmark, toggleSpeak,
     editExplain, exportOverrides, importOverrides
   };
 

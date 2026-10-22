@@ -2,7 +2,7 @@
 // 年度データを追加したら ASSETS にも追記し、CACHE_NAME を上げること。
 // 他の科目アプリと同一オリジンで公開されるため、削除対象は自アプリの接頭辞のキャッシュだけに限る。
 const CACHE_PREFIX = "zaimu-quiz-";
-const CACHE_NAME = CACHE_PREFIX + "v1";
+const CACHE_NAME = CACHE_PREFIX + "v2";
 
 const ASSETS = [
   "./",
