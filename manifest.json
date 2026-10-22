@@ -1,0 +1,15 @@
+{
+  "name": "財務・会計 一問一答",
+  "short_name": "財務・会計",
+  "description": "中小企業診断士 第1次試験「財務・会計」の過去問 一問一答",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6fa",
+  "theme_color": "#2f6fed",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
